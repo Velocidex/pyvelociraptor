@@ -31,5 +31,6 @@ setup(
 
     [console_scripts]
     pyvelociraptor = pyvelociraptor.client_example:main
+    pyvelociraptor_push_event = pyvelociraptor.push_event:main
     """,
 )

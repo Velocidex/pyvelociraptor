@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 // This is just enough protobuf to be able to talk with the Server's
 // API Query() endpoint.
 
@@ -42,4 +44,5 @@ message VQLResponse {
 
 service API {
    rpc Query(VQLCollectorArgs) returns (stream VQLResponse) {}
+   rpc WriteEvent(VQLResponse) returns (google.protobuf.Empty) {}
 }

@@ -37,6 +37,7 @@ import json
 import grpc
 import yaml
 
+import pyvelociraptor
 from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
@@ -90,14 +91,14 @@ def main():
         epilog='Example: client_example.py api_client.yaml '
     '" SELECT * from Artifact.Generic.Client.Stats() "')
 
-    parser.add_argument('config', type=str,
+    parser.add_argument('--config', type=str,
                         help='Path to the api_client config. You can generate such '
                         'a file with "velociraptor config api_client"')
     parser.add_argument('query', type=str, help='The query to run.')
 
     args = parser.parse_args()
 
-    config = yaml.safe_load(open(args.config).read())
+    config = pyvelociraptor.LoadConfigFile(args.config)
     run(config, args.query)
 
 if __name__ == '__main__':

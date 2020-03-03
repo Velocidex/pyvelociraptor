@@ -3,34 +3,7 @@
 """Example Velociraptor api client.
 
 This example demonstrates how to connect to the Velociraptor server
-and issue a server side VQL query.
-
-In this example we may issue event queries which stream results slowly
-to the api client. This demonstrates how to build reactive post
-processing scripts as required.
-
-
-Some example queries to try:
-
-Get basic information about the server:
-
- SELECT * from info()
-
-
-Get server load as a data stream (This will never terminate and return
-data points every 10 seconds):
-
- SELECT * from Artifact.Generic.Client.Stats()
-
-
-Get an event for every execution of psexecsvc on any deployed
-machine. The event can be handled in this python loop as required. The
-python script will block until psexec is detected.
-
-   SELECT * from watch_monitoring(
-          artifact='Windows.Events.ProcessCreation')
-   WHERE Name =~ '(?i)psexesvc'
-
+and write an event to a single Artifact queue.
 """
 import argparse
 import collections

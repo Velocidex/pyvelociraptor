@@ -39,6 +39,7 @@ message VQLResponse {
     VQLRequest Query = 3;
     uint64 timestamp = 4;
     uint64 total_rows = 7;
+    string log = 9;
 }
 
 

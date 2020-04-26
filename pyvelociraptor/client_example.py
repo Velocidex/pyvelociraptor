@@ -35,11 +35,13 @@ python script will block until psexec is detected.
 import argparse
 import json
 import grpc
+import time
 import yaml
 
 import pyvelociraptor
 from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
+
 
 def run(config, query):
     # Fill in the SSL params from the api_client config file. You can get such a file:
@@ -63,6 +65,7 @@ def run(config, query):
         # "Artifact" plugin.
         request = api_pb2.VQLCollectorArgs(
             max_wait=1,
+            max_row=100,
             Query=[api_pb2.VQLRequest(
                 Name="Test",
                 VQL=query,
@@ -72,18 +75,28 @@ def run(config, query):
         # server. If the query is an event query we will run this loop
         # forever.
         for response in stub.Query(request):
+            if response.Response:
+                # Each response represents a list of rows. The columns
+                # are provided in their own field as an array, to
+                # ensure column order is preserved if required. If you
+                # dont care about column order just ignore the Columns
+                # field. Note that although JSON does not specify the
+                # order of keys in a dict Velociraptor always
+                # maintains this order so an alternative to the
+                # Columns field is to use a JSON parser that preserves
+                # field ordering.
 
-            # Each response represents a list of rows. The columns are
-            # provided in their own field as an array, to ensure
-            # column order is preserved if required. If you dont care
-            # about column order just ignore the Columns field.
-            # print("Columns %s:" % response.Columns)
+                # print("Columns %s:" % response.Columns)
 
-            # The actual payload is a list of dicts. Each dict has
-            # column names as keys and arbitrary (possibly nested)
-            # values.
-            package = json.loads(response.Response)
-            print (package)
+                # The actual payload is a list of dicts. Each dict has
+                # column names as keys and arbitrary (possibly nested)
+                # values.
+                package = json.loads(response.Response)
+                print (package)
+
+            elif response.log:
+                # Query execution logs are sent in their own messages.
+                print ("%s: %s" % (time.ctime(response.timestamp / 1000000), response.log))
 
 def main():
     parser = argparse.ArgumentParser(

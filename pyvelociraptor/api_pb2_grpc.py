@@ -20,6 +20,11 @@ class APIStub(object):
         request_serializer=pyvelociraptor_dot_api__pb2.VQLCollectorArgs.SerializeToString,
         response_deserializer=pyvelociraptor_dot_api__pb2.VQLResponse.FromString,
         )
+    self.VFSGetBuffer = channel.unary_unary(
+        '/proto.API/VFSGetBuffer',
+        request_serializer=pyvelociraptor_dot_api__pb2.VFSFileBuffer.SerializeToString,
+        response_deserializer=pyvelociraptor_dot_api__pb2.VFSFileBuffer.FromString,
+        )
     self.WriteEvent = channel.unary_unary(
         '/proto.API/WriteEvent',
         request_serializer=pyvelociraptor_dot_api__pb2.VQLResponse.SerializeToString,
@@ -32,6 +37,13 @@ class APIServicer(object):
   pass
 
   def Query(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def VFSGetBuffer(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -52,6 +64,11 @@ def add_APIServicer_to_server(servicer, server):
           servicer.Query,
           request_deserializer=pyvelociraptor_dot_api__pb2.VQLCollectorArgs.FromString,
           response_serializer=pyvelociraptor_dot_api__pb2.VQLResponse.SerializeToString,
+      ),
+      'VFSGetBuffer': grpc.unary_unary_rpc_method_handler(
+          servicer.VFSGetBuffer,
+          request_deserializer=pyvelociraptor_dot_api__pb2.VFSFileBuffer.FromString,
+          response_serializer=pyvelociraptor_dot_api__pb2.VFSFileBuffer.SerializeToString,
       ),
       'WriteEvent': grpc.unary_unary_rpc_method_handler(
           servicer.WriteEvent,

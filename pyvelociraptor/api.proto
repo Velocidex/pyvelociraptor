@@ -42,8 +42,19 @@ message VQLResponse {
     string log = 9;
 }
 
+message VFSFileBuffer {
+    string client_id = 1;
+
+    // Path in the filestore for the file.
+    string vfs_path = 2;
+
+    uint64 offset = 3;
+    uint32 length = 4;
+    bytes data = 5;
+}
 
 service API {
    rpc Query(VQLCollectorArgs) returns (stream VQLResponse) {}
+   rpc VFSGetBuffer(VFSFileBuffer) returns (VFSFileBuffer) {}
    rpc WriteEvent(VQLResponse) returns (google.protobuf.Empty) {}
 }

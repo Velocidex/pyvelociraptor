@@ -9,7 +9,7 @@ from distutils.core import setup
 
 setup(
     name="pyvelociraptor",
-    version="0.1.2",
+    version="0.1.3",
     packages=['pyvelociraptor'],
     description="PyVelociraptor is the python binding for the Velociraptor API",
     license="GPL",

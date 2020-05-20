@@ -5,6 +5,6 @@ pyvelociraptor/__init__.py
 pyvelociraptor/api_pb2.py
 pyvelociraptor/api_pb2_grpc.py
 pyvelociraptor/client_example.py
+pyvelociraptor/fetch.py
 pyvelociraptor/push_event.py
-pyvelociraptor/setup.py
 pyvelociraptor/velo_pandas.py

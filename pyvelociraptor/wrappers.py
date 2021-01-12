@@ -1,6 +1,5 @@
-
-
-from velo_pandas import DataFrameQuery as run
+from pyvelociraptor.velo_pandas import DataFrameQuery
+from pyvelociraptor import LoadConfigFile
 import pandas as pd
 import time
 
@@ -8,21 +7,7 @@ pd.set_option('display.max_colwidth', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
-# helper functions
-def getdf(vql):
-    return pd.DataFrame(run(vql))
-
-def getparams(d):
-    o = "dict("
-    for i,(k,v) in enumerate(d.items()):
-        if i == len(d) - 1: #LAST
-            o += k+'="'+v+'")'
-            return o
-        else:
-            o += k+'="'+v+'",'
-
-
-def run_artifact(hostname, artifact_name, artifact_parameters=None, limit=None, artifact_collect_name=None, verbose=True, timeout=600):
+def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None, limit=None, artifact_collect_name=None, verbose=True, timeout=600):
     """
     # [Instantiates artifact for specific hostname and returns it's results as a pandas DataFrame]
     # Examples:
@@ -65,11 +50,13 @@ def run_artifact(hostname, artifact_name, artifact_parameters=None, limit=None, 
     # Returns:
     #     [pandas.DataFrane]: [Results of artifact execution.]
     """    
+    if config is None:
+        config = LoadConfigFile()
 
     # FINDING CLIENT_ID FROM HOSTNAME
-    cid_query = run(f"""
+    cid_query = DataFrameQuery(f"""
     SELECT client_id FROM clients(search="{hostname}")
-    """)
+    """, config=config)
     if cid_query:
         cid = cid_query["client_id"][0]
         if verbose:
@@ -79,31 +66,32 @@ def run_artifact(hostname, artifact_name, artifact_parameters=None, limit=None, 
         return None
 
     # INSTANTIATING ARTIFACT
-    if artifact_parameters:
-        start_artifact = f"""
-        SELECT collect_client(
-            client_id="{cid}", 
-            artifacts="{artifact_name}", 
-            env={getparams(artifact_parameters)}) 
-        AS Flow FROM scope()"""
-    else:
-        start_artifact = f"""
+    start_artifact_query = f"""
         SELECT collect_client(
             client_id="{cid}", 
             artifacts="{artifact_name}") 
         AS Flow FROM scope()"""
+    
+    if artifact_parameters:
+        meta = DataFrameQuery(start_artifact_query, config=config, **artifact_parameters)
+    else:
+        meta = DataFrameQuery(start_artifact_query, config=config)
 
     if verbose:
         print("[!] Running VQL:")
-        print(start_artifact,"\n")
-    
-    # GETTING RESPONSE METADATA
-    meta = run(start_artifact)
-    if not meta["Flow"][0]:
-        print("[-] Artifact not instantiated... Check name and parameters!")
+        print(start_artifact_query,"\n")
+        if artifact_parameters:
+            print("[!] Using Query parameters:", end=" ")
+            [print(f'{k}="{v}"', end=" ") for k,v in artifact_parameters.items()]
+            print("\n")
+
+    # GETTING RESPONSE METADATA    
+    try:
+        flow_id = meta["Flow"][0]["flow_id"]
+    except (TypeError, IndexError):
+        print("[-] Artifact not instantiated... Check validity of name or parameters!")
         return None
     
-    flow_id = meta["Flow"][0]["flow_id"]
     if verbose:
         print(f"[+] Got artifact flow ID: {flow_id}")
 
@@ -132,15 +120,19 @@ def run_artifact(hostname, artifact_name, artifact_parameters=None, limit=None, 
         if verbose:
             print(f"[!] Artifact is running... {round(delay,2)}s")
     
-        response_df = getdf(vql)
+        response_df = pd.DataFrame(DataFrameQuery(vql))
         
         time.sleep(5)
         delay = time.time() - now
     
-    if verbose:
-        if delay < timeout:
+    if delay < timeout:
+        if verbose:
             print(f"[+] Done! {round(delay,2)}s\n")
-        else:
-            print(f"[-] Reached timeout ({timeout}s)... Check artifact status manually in Velociraptor GUI.\n")
-    
-    return response_df
+        return response_df
+    else:
+        # in case of error/timoeut should print message regardless of 'verbose' value
+        print(f"[-] Reached timeout ({timeout}s). Check artifact status manually in Velociraptor's GUI!")
+        # to provide VQL query for further analysis only when not printed previously (i.e. verbose=False)
+        if not verbose:
+            print(vql)
+        return None

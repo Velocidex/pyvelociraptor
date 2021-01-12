@@ -99,17 +99,13 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
     response_df = pd.DataFrame()
     if not artifact_collect_name:
         artifact_collect_name = artifact_name
-    if limit:
-        vql = f"""
-        SELECT * FROM source(
-            artifact='{artifact_collect_name}',
-            client_id="{cid}", flow_id='{flow_id}')
-        LIMIT {limit}"""
-    else:
-        vql = f"""
+    vql = f"""
         SELECT * FROM source(
             artifact='{artifact_collect_name}',
             client_id="{cid}", flow_id='{flow_id}')"""
+    if limit:
+        vql += f"\n\tLIMIT {limit}"
+        
     if verbose:
         print(f"[!] Collecting data using following VQL:")
         print(vql,"\n")

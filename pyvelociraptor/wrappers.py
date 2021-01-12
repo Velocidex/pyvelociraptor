@@ -55,8 +55,8 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
 
     # FINDING CLIENT_ID FROM HOSTNAME
     cid_query = DataFrameQuery(f"""
-    SELECT client_id FROM clients(search="{hostname}")
-    """, config=config)
+    SELECT client_id FROM clients(search=Hostname)
+    """, config=config, Hostname=hostname)
     if cid_query:
         cid = cid_query["client_id"][0]
         if verbose:
@@ -68,18 +68,22 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
     # INSTANTIATING ARTIFACT
     start_artifact_query = f"""
         SELECT collect_client(
-            client_id="{cid}", 
-            artifacts="{artifact_name}") 
+            client_id=CID, 
+            artifacts=Artifact_Name) 
         AS Flow FROM scope()"""
     
     if artifact_parameters:
-        meta = DataFrameQuery(start_artifact_query, config=config, **artifact_parameters)
+        meta = DataFrameQuery(start_artifact_query, config=config,
+                              CID=cid, Artifact_Name=artifact_name, **artifact_parameters)
     else:
-        meta = DataFrameQuery(start_artifact_query, config=config)
+        meta = DataFrameQuery(start_artifact_query, config=config,
+                              CID=cid, Artifact_Name=artifact_name)
 
     if verbose:
         print("[!] Running VQL:")
-        print(start_artifact_query,"\n")
+        print(start_artifact_query\
+            .replace("CID",f'"{cid}"')\
+            .replace("Artifact_Name",f'"{artifact_name}"'),"\n")
         if artifact_parameters:
             print("[!] Using Query parameters:", end=" ")
             [print(f'{k}="{v}"', end=" ") for k,v in artifact_parameters.items()]
@@ -101,15 +105,17 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
         artifact_collect_name = artifact_name
     vql = f"""
         SELECT * FROM source(
-            artifact='{artifact_collect_name}',
-            client_id="{cid}", 
-            flow_id='{flow_id}')"""
+            artifact=Artifact_Name,
+            client_id=CID, 
+            flow_id=Flow_ID)"""
     if limit:
         vql += f"\n\tLIMIT {limit}"
         
     if verbose:
         print(f"[!] Collecting data using following VQL:")
-        print(vql,"\n")
+        print(vql.replace("Artifact_Name", f'"{artifact_collect_name}"')\
+                .replace("CID",f'"{cid}"')\
+                .replace("Flow_ID", f'"{flow_id}"'),"\n")
 
     now = time.time()
     delay = 0
@@ -117,7 +123,8 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
         if verbose:
             print(f"[!] Artifact is running... {round(delay,2)}s")
     
-        response_df = pd.DataFrame(DataFrameQuery(vql))
+        response_df = pd.DataFrame(DataFrameQuery(vql, Artifact_Name=artifact_collect_name, 
+                                                  CID=cid, Flow_ID=flow_id))
         
         time.sleep(5)
         delay = time.time() - now
@@ -131,5 +138,7 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
         print(f"[-] Reached timeout ({timeout}s). Check artifact status manually in Velociraptor's GUI!")
         # to provide VQL query for further analysis only when not printed previously (i.e. verbose=False)
         if not verbose:
-            print(vql)
+            print(vql.replace("Artifact_Name", f'"{artifact_collect_name}"')\
+                .replace("CID",f'"{cid}"')\
+                .replace("Flow_ID", f'"{flow_id}"'),"\n")
         return None

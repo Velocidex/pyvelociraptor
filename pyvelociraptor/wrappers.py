@@ -102,7 +102,8 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
     vql = f"""
         SELECT * FROM source(
             artifact='{artifact_collect_name}',
-            client_id="{cid}", flow_id='{flow_id}')"""
+            client_id="{cid}", 
+            flow_id='{flow_id}')"""
     if limit:
         vql += f"\n\tLIMIT {limit}"
         

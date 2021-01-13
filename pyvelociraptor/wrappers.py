@@ -109,8 +109,12 @@ def run_artifact(hostname, artifact_name, config=None, artifact_parameters=None,
             client_id=CID, 
             flow_id=Flow_ID)"""
     if limit:
-        vql += f"\n\tLIMIT {limit}"
-        
+        try:
+            vql += f"\n\tLIMIT {int(limit)}"
+        except ValueError:
+            print("[-] Incorrect 'limit' value... Should be integer!")
+            return None
+
     if verbose:
         print(f"[!] Collecting data using following VQL:")
         print(vql.replace("Artifact_Name", f'"{artifact_collect_name}"')\

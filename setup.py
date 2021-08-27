@@ -9,7 +9,7 @@ from distutils.core import setup
 
 setup(
     name="pyvelociraptor",
-    version="0.1.3",
+    version="0.1.5",
     packages=['pyvelociraptor'],
     description="PyVelociraptor is the python binding for the Velociraptor API",
     license="GPL",
@@ -26,6 +26,7 @@ setup(
         "grpcio",
         "grpcio-tools",
         "pyyaml",
+        "cryptography",
     ],
     entry_points="""
 

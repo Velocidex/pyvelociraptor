@@ -114,9 +114,11 @@ def DataFrameQuery(query, timeout=600, config=None, **kw):
 
         result = {}
         for response in stub.Query(request):
-            if response.Response:
-              for row in json.loads(response.Response):
-                  for c in response.Columns:
-                      result.setdefault(c, []).append(row.get(c))
+            if not response.Response:
+                continue
+
+            for row in json.loads(response.Response):
+                for c in response.Columns:
+                    result.setdefault(c, []).append(row.get(c))
 
         return result

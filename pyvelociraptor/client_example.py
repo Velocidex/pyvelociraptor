@@ -43,7 +43,7 @@ from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
 
-def run(config, query):
+def run(config, query, env_dict):
     # Fill in the SSL params from the api_client config file. You can get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
     creds = grpc.ssl_channel_credentials(
@@ -54,6 +54,10 @@ def run(config, query):
     # This option is required to connect to the grpc server by IP - we
     # use self signed certs.
     options = (('grpc.ssl_target_name_override', "VelociraptorServer",),)
+
+    env = []
+    for k, v in env_dict.items():
+        env.append(dict(key=k, value=v))
 
     # The first step is to open a gRPC channel to the server..
     with grpc.secure_channel(config["api_connection_string"],
@@ -69,7 +73,9 @@ def run(config, query):
             Query=[api_pb2.VQLRequest(
                 Name="Test",
                 VQL=query,
-            )])
+            )],
+            env=env,
+        )
 
         # This will block as responses are streamed from the
         # server. If the query is an event query we will run this loop
@@ -98,21 +104,42 @@ def run(config, query):
                 # Query execution logs are sent in their own messages.
                 print ("%s: %s" % (time.ctime(response.timestamp / 1000000), response.log))
 
+class kwargs_append_action(argparse.Action):
+    def __call__(self, parser, args, values, option_string=None):
+        try:
+            d = dict(map(lambda x: x.split('='),values))
+        except ValueError as ex:
+            raise argparse.ArgumentError(
+                self, f"Could not parse argument \"{values}\" as k1=v1 k2=v2 ... format")
+
+        setattr(args, self.dest, d)
+
 def main():
     parser = argparse.ArgumentParser(
         description="Sample Velociraptor query client.",
-        epilog='Example: client_example.py api_client.yaml '
-    '" SELECT * from Artifact.Generic.Client.Stats() "')
+        epilog='Example: client_example.py --config api_client.yaml '
+    '"SELECT *, Foo from info()" --env Foo=Bar')
 
     parser.add_argument('--config', type=str,
                         help='Path to the api_client config. You can generate such '
                         'a file with "velociraptor config api_client"')
+
+    parser.add_argument("--env", dest="env",
+                        nargs='+',
+                        default={},
+                        required=False,
+                        action=kwargs_append_action,
+                        metavar="KEY=VALUE",
+                        help="Add query environment values in the form of Key=Value.")
+
     parser.add_argument('query', type=str, help='The query to run.')
 
     args = parser.parse_args()
 
+    print(args)
+
     config = pyvelociraptor.LoadConfigFile(args.config)
-    run(config, args.query)
+    run(config, args.query, args.env)
 
 if __name__ == '__main__':
     main()

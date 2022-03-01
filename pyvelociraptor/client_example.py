@@ -136,8 +136,6 @@ def main():
 
     args = parser.parse_args()
 
-    print(args)
-
     config = pyvelociraptor.LoadConfigFile(args.config)
     run(config, args.query, args.env)
 

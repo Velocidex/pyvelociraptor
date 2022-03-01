@@ -19,7 +19,8 @@ from pyvelociraptor import api_pb2_grpc
 
 
 def run(config, vfs_path):
-    # Fill in the SSL params from the api_client config file. You can get such a file:
+    # Fill in the SSL params from the api_client config file. You can
+    # get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
     creds = grpc.ssl_channel_credentials(
         root_certificates=config["ca_certificate"].encode("utf8"),
@@ -41,7 +42,9 @@ def run(config, vfs_path):
         offset = 0
         while 1:
             request = api_pb2.VFSFileBuffer(
-                vfs_path=vfs_path,
+                # Paths must be given as separate components (they may
+                # contain / themselves).
+                components=vfs_path.split("/"),
 
                 # For demonstration we set a small buffer but you
                 # should use a larger one in practice.
@@ -59,7 +62,7 @@ def run(config, vfs_path):
 def main():
     parser = argparse.ArgumentParser(
         description="Sample Velociraptor fetch client.",
-        epilog='Example: fetch.py api_client.yaml /downloads/C.b9bdf1fba596d686/F.BQK1O12VLHH04/F.BQK1O12VLHH04.zip')
+        epilog='Example: fetch.py --config api_client.yaml /downloads/C.b9bdf1fba596d686/F.BQK1O12VLHH04/F.BQK1O12VLHH04.zip')
 
     parser.add_argument('--config', type=str,
                         help='Path to the api_client config. You can generate such '

@@ -23,6 +23,7 @@ message VQLCollectorArgs {
     uint64 max_row = 4;
     uint64 max_wait = 6;
     float ops_per_second = 24;
+    string org_id = 35;
 }
 
 message VQLTypeMap {

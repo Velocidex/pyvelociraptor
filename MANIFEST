@@ -8,3 +8,4 @@ pyvelociraptor/client_example.py
 pyvelociraptor/fetch.py
 pyvelociraptor/push_event.py
 pyvelociraptor/velo_pandas.py
+pyvelociraptor/wrappers.py

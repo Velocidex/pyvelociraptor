@@ -43,7 +43,7 @@ from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
 
-def run(config, query, env_dict):
+def run(config, query, env_dict, org_id):
     # Fill in the SSL params from the api_client config file. You can get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
     creds = grpc.ssl_channel_credentials(
@@ -68,6 +68,7 @@ def run(config, query, env_dict):
         # you can collect artifacts by simply naming them using the
         # "Artifact" plugin.
         request = api_pb2.VQLCollectorArgs(
+            org=org_id,
             max_wait=1,
             max_row=100,
             Query=[api_pb2.VQLRequest(
@@ -124,6 +125,9 @@ def main():
                         help='Path to the api_client config. You can generate such '
                         'a file with "velociraptor config api_client"')
 
+    parser.add_argument("--org", type=str,
+                        help="Org ID to use")
+
     parser.add_argument("--env", dest="env",
                         nargs='+',
                         default={},
@@ -137,7 +141,7 @@ def main():
     args = parser.parse_args()
 
     config = pyvelociraptor.LoadConfigFile(args.config)
-    run(config, args.query, args.env)
+    run(config, args.query, args.env, args.org)
 
 if __name__ == '__main__':
     main()

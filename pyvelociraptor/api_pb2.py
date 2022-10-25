@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18pyvelociraptor/api.proto\x12\x05proto\x1a\x1bgoogle/protobuf/empty.proto\"\'\n\nVQLRequest\x12\x0c\n\x04Name\x18\x02 \x01(\t\x12\x0b\n\x03VQL\x18\x01 \x01(\t\"$\n\x06VQLEnv\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x8b\x01\n\x10VQLCollectorArgs\x12\x1a\n\x03\x65nv\x18\x03 \x03(\x0b\x32\r.proto.VQLEnv\x12 \n\x05Query\x18\x02 \x03(\x0b\x32\x11.proto.VQLRequest\x12\x0f\n\x07max_row\x18\x04 \x01(\x04\x12\x10\n\x08max_wait\x18\x06 \x01(\x04\x12\x16\n\x0eops_per_second\x18\x18 \x01(\x02\"*\n\nVQLTypeMap\x12\x0e\n\x06\x63olumn\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"\xc8\x01\n\x0bVQLResponse\x12\x10\n\x08Response\x18\x01 \x01(\t\x12\x0f\n\x07\x43olumns\x18\x02 \x03(\t\x12 \n\x05types\x18\x08 \x03(\x0b\x32\x11.proto.VQLTypeMap\x12\x10\n\x08query_id\x18\x05 \x01(\x04\x12\x0c\n\x04part\x18\x06 \x01(\x04\x12 \n\x05Query\x18\x03 \x01(\x0b\x32\x11.proto.VQLRequest\x12\x11\n\ttimestamp\x18\x04 \x01(\x04\x12\x12\n\ntotal_rows\x18\x07 \x01(\x04\x12\x0b\n\x03log\x18\t \x01(\t\"d\n\rVFSFileBuffer\x12\x11\n\tclient_id\x18\x01 \x01(\t\x12\x0e\n\x06offset\x18\x03 \x01(\x04\x12\x0e\n\x06length\x18\x04 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x12\x12\n\ncomponents\x18\x06 \x03(\t2\xb9\x01\n\x03\x41PI\x12\x38\n\x05Query\x12\x17.proto.VQLCollectorArgs\x1a\x12.proto.VQLResponse\"\x00\x30\x01\x12<\n\x0cVFSGetBuffer\x12\x14.proto.VFSFileBuffer\x1a\x14.proto.VFSFileBuffer\"\x00\x12:\n\nWriteEvent\x12\x12.proto.VQLResponse\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
+  serialized_pb=b'\n\x18pyvelociraptor/api.proto\x12\x05proto\x1a\x1bgoogle/protobuf/empty.proto\"\'\n\nVQLRequest\x12\x0c\n\x04Name\x18\x02 \x01(\t\x12\x0b\n\x03VQL\x18\x01 \x01(\t\"$\n\x06VQLEnv\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x9b\x01\n\x10VQLCollectorArgs\x12\x1a\n\x03\x65nv\x18\x03 \x03(\x0b\x32\r.proto.VQLEnv\x12 \n\x05Query\x18\x02 \x03(\x0b\x32\x11.proto.VQLRequest\x12\x0f\n\x07max_row\x18\x04 \x01(\x04\x12\x10\n\x08max_wait\x18\x06 \x01(\x04\x12\x16\n\x0eops_per_second\x18\x18 \x01(\x02\x12\x0e\n\x06org_id\x18# \x01(\t\"*\n\nVQLTypeMap\x12\x0e\n\x06\x63olumn\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\t\"\xc8\x01\n\x0bVQLResponse\x12\x10\n\x08Response\x18\x01 \x01(\t\x12\x0f\n\x07\x43olumns\x18\x02 \x03(\t\x12 \n\x05types\x18\x08 \x03(\x0b\x32\x11.proto.VQLTypeMap\x12\x10\n\x08query_id\x18\x05 \x01(\x04\x12\x0c\n\x04part\x18\x06 \x01(\x04\x12 \n\x05Query\x18\x03 \x01(\x0b\x32\x11.proto.VQLRequest\x12\x11\n\ttimestamp\x18\x04 \x01(\x04\x12\x12\n\ntotal_rows\x18\x07 \x01(\x04\x12\x0b\n\x03log\x18\t \x01(\t\"d\n\rVFSFileBuffer\x12\x11\n\tclient_id\x18\x01 \x01(\t\x12\x0e\n\x06offset\x18\x03 \x01(\x04\x12\x0e\n\x06length\x18\x04 \x01(\r\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\x12\x12\n\ncomponents\x18\x06 \x03(\t2\xb9\x01\n\x03\x41PI\x12\x38\n\x05Query\x12\x17.proto.VQLCollectorArgs\x1a\x12.proto.VQLResponse\"\x00\x30\x01\x12<\n\x0cVFSGetBuffer\x12\x14.proto.VFSFileBuffer\x1a\x14.proto.VFSFileBuffer\"\x00\x12:\n\nWriteEvent\x12\x12.proto.VQLResponse\x1a\x16.google.protobuf.Empty\"\x00\x62\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
@@ -148,6 +148,13 @@ _VQLCOLLECTORARGS = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='org_id', full_name='proto.VQLCollectorArgs.org_id', index=5,
+      number=35, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -161,7 +168,7 @@ _VQLCOLLECTORARGS = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=144,
-  serialized_end=283,
+  serialized_end=299,
 )
 
 
@@ -199,8 +206,8 @@ _VQLTYPEMAP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=285,
-  serialized_end=327,
+  serialized_start=301,
+  serialized_end=343,
 )
 
 
@@ -287,8 +294,8 @@ _VQLRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=330,
-  serialized_end=530,
+  serialized_start=346,
+  serialized_end=546,
 )
 
 
@@ -347,8 +354,8 @@ _VFSFILEBUFFER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=532,
-  serialized_end=632,
+  serialized_start=548,
+  serialized_end=648,
 )
 
 _VQLCOLLECTORARGS.fields_by_name['env'].message_type = _VQLENV
@@ -414,8 +421,8 @@ _API = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=635,
-  serialized_end=820,
+  serialized_start=651,
+  serialized_end=836,
   methods=[
   _descriptor.MethodDescriptor(
     name='Query',

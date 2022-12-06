@@ -68,7 +68,7 @@ def run(config, query, env_dict, org_id):
         # you can collect artifacts by simply naming them using the
         # "Artifact" plugin.
         request = api_pb2.VQLCollectorArgs(
-            org=org_id,
+            org_id=org_id,
             max_wait=1,
             max_row=100,
             Query=[api_pb2.VQLRequest(

@@ -43,7 +43,7 @@ from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
 
-def run(config, query, env_dict, org_id):
+def run(config, query, env_dict, org_id, timeout=0):
     # Fill in the SSL params from the api_client config file. You can get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
     creds = grpc.ssl_channel_credentials(
@@ -71,6 +71,7 @@ def run(config, query, env_dict, org_id):
             org_id=org_id,
             max_wait=1,
             max_row=100,
+            timeout=timeout,
             Query=[api_pb2.VQLRequest(
                 Name="Test",
                 VQL=query,
@@ -128,6 +129,9 @@ def main():
     parser.add_argument("--org", type=str,
                         help="Org ID to use")
 
+    parser.add_argument("--timeout", type=int,
+                        help="Timeout to use for the query")
+
     parser.add_argument("--env", dest="env",
                         nargs='+',
                         default={},
@@ -141,7 +145,7 @@ def main():
     args = parser.parse_args()
 
     config = pyvelociraptor.LoadConfigFile(args.config)
-    run(config, args.query, args.env, args.org)
+    run(config, args.query, args.env, args.org, args.timeout)
 
 if __name__ == '__main__':
     main()

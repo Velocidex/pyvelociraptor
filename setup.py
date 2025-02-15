@@ -4,18 +4,22 @@
 
 __author__ = "Velocidex <support@velocidex.com>"
 
-import io
-from distutils.core import setup
+import setuptools
 
-setup(
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(
     name="pyvelociraptor",
-    version="0.1.8",
-    packages=['pyvelociraptor'],
-    description="PyVelociraptor is the python binding for the Velociraptor API",
-    license="GPL",
-    url="https://github.com/Velocidex/pyvelociraptor",
+    version="0.1.9",
     author="The Velociraptor Team",
     author_email="support@velocidex.com",
+    description="PyVelociraptor is the python binding for the Velociraptor API",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+
+    license="GPL",
+    url="https://github.com/Velocidex/pyvelociraptor",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -34,4 +38,5 @@ setup(
     pyvelociraptor = pyvelociraptor.client_example:main
     pyvelociraptor_push_event = pyvelociraptor.push_event:main
     """,
+    packages=setuptools.find_packages(),
 )

@@ -1,4 +1,4 @@
 grpcio==1.53.2
 grpcio-tools==1.18.0
 PyYAML==6.0.1
-cryptography==43.0.1
+cryptography==44.0.1

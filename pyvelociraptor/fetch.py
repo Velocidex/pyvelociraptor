@@ -18,7 +18,7 @@ from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
 
-def run(config, vfs_path):
+def run(config, vfs_path, org_id):
     # Fill in the SSL params from the api_client config file. You can
     # get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
@@ -42,6 +42,8 @@ def run(config, vfs_path):
         offset = 0
         while 1:
             request = api_pb2.VFSFileBuffer(
+                org_id=org_id,
+
                 # Paths must be given as separate components (they may
                 # contain / themselves).
                 components=vfs_path.split("/"),
@@ -67,12 +69,16 @@ def main():
     parser.add_argument('--config', type=str,
                         help='Path to the api_client config. You can generate such '
                         'a file with "velociraptor config api_client"')
+
+    parser.add_argument("--org", type=str,
+                        help="Org ID to use")
+
     parser.add_argument('vfs_path', type=str, help='The path to get.')
 
     args = parser.parse_args()
 
     config = pyvelociraptor.LoadConfigFile(args.config)
-    run(config, args.vfs_path)
+    run(config, args.vfs_path, args.org)
 
 if __name__ == '__main__':
     main()

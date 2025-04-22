@@ -4,6 +4,51 @@
 
 This example demonstrates how to connect to the Velociraptor server
 and write an event to a single Artifact queue.
+
+NOTE: This API will be available in the next release. It is presented
+here for testing until then (will work with any Velociraptor server
+built after 0.74.2)
+
+NOTE: The API user **must** have permissions to send to the specific
+queue. You must grant the user this permission. Currently this is not
+possibly to do via the GUI so you will have to use the following VQL
+in a notebook.
+
+For example the following will grant the user 'mic' the permission to
+send to the `Server.Audit.Logs` queue. Note that no other permission
+is needed other than `publish_queues`.
+
+```
+LET _GetPolicy(User) = SELECT _policy
+  FROM gui_users()
+  WHERE name = User
+
+LET GetPolicy(User) = _GetPolicy(User=User)[0]._policy
+
+// Preserve the existing policy and just replace the publish_queues
+// field.
+LET _ <= user_grant(user="mic",
+                    policy=GetPolicy(User="mic") +
+                      dict(publish_queues=["Server.Audit.Logs", ]))
+
+SELECT GetPolicy(User="mic") AS Policy
+FROM scope()
+```
+
+The result will be something like
+```
+  {
+    "Policy": {
+      "publish_queues": [
+        "Server.Audit.Logs"
+      ],
+      "roles": [
+        "reader"
+      ]
+    }
+  }
+```
+
 """
 import argparse
 import collections
@@ -14,7 +59,13 @@ import yaml
 from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
-def run(config, queue, event, columns):
+def run(config, queue, org_id, client_id, event):
+    serialized = ""
+    count = 0
+    for line in event:
+        serialized += json.dumps(line) + "\n"
+        count += 1
+
     # Fill in the SSL params from the api_client config file. You can get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
     creds = grpc.ssl_channel_credentials(
@@ -31,15 +82,15 @@ def run(config, queue, event, columns):
                              creds, options) as channel:
         stub = api_pb2_grpc.APIStub(channel)
 
-        # The request consists of one or more VQL queries. Note that
-        # you can collect artifacts by simply naming them using the
-        # "Artifact" plugin.
-        request = api_pb2.VQLResponse(
-            Response=event,
-            Columns=columns,
-            Query=api_pb2.VQLRequest(Name=queue))
+        request = api_pb2.PushEventRequest(
+            artifact=queue,
+            client_id=client_id,
+            jsonl=serialized.encode("utf8"),
+            rows=count,
+            org_id=org_id,
+        )
 
-        err = stub.WriteEvent(request)
+        err = stub.PushEvents(request)
         print(err)
 
 def main():
@@ -52,7 +103,15 @@ def main():
                         help='Path to the api_client config. You can generate such '
                         'a file with "velociraptor config api_client"')
     parser.add_argument('queue', type=str, help='The artifact name this event will go to.')
+
+    parser.add_argument('--client_id', type=str, default="server",
+                        help='The Client Id of the queue.')
+
     parser.add_argument('event', type=str, help='A JSON formatted event to send')
+
+    parser.add_argument("--org", type=str,
+                        help="Org ID to use")
+
     args = parser.parse_args()
 
     # Parse the event to determine the columns
@@ -62,12 +121,9 @@ def main():
     # Let the user just supply one event if they want
     if not isinstance(event_data, list):
         event_data = [event_data,]
-        event = json.dumps(event_data)
-
-    columns = event_data[0].keys()
 
     config = yaml.safe_load(open(args.config).read())
-    run(config, args.queue, event, columns)
+    run(config, args.queue, args.org, args.client_id, event_data)
 
 if __name__ == '__main__':
     main()

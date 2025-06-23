@@ -20,8 +20,7 @@ Get basic information about the server:
 Get server load as a data stream (This will never terminate and return
 data points every 10 seconds):
 
- SELECT * from Artifact.Generic.Client.Stats()
-
+ SELECT * from Artifact.Generic.Client.Stats(preconditions=TRUE)
 
 Get an event for every execution of psexecsvc on any deployed
 machine. The event can be handled in this python loop as required. The

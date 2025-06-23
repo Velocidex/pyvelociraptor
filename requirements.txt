@@ -1,3 +1,4 @@
+protobuf>=4.25.8 # not directly required, pinned by Snyk to avoid a vulnerability
 grpcio==1.73.0
 grpcio-tools==1.73.0
 PyYAML==6.0.2

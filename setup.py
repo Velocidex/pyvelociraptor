@@ -11,14 +11,14 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyvelociraptor",
-    version="0.1.10",
+    version="0.1.11",
     author="The Velociraptor Team",
     author_email="support@velocidex.com",
     description="PyVelociraptor is the python binding for the Velociraptor API",
     long_description=long_description,
     long_description_content_type="text/markdown",
 
-    license="GPL",
+    license="MIT",
     url="https://github.com/Velocidex/pyvelociraptor",
     classifiers=[
         "Development Status :: 4 - Beta",

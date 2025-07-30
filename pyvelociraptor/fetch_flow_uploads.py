@@ -47,7 +47,7 @@ def fetch_file(stub, components, outfd, org_id):
         offset+=len(res.data)
 
 
-def run(config, client_id, flow_id, output_path, org_id):
+def run(config, client_id, flow_id, output_path, export_zip, org_id):
     # Fill in the SSL params from the api_client config file. You can
     # get such a file:
     # velociraptor --config server.config.yaml config api_client > api_client.conf.yaml
@@ -59,6 +59,18 @@ def run(config, client_id, flow_id, output_path, org_id):
     # This option is required to connect to the grpc server by IP - we
     # use self signed certs.
     options = (('grpc.ssl_target_name_override', "VelociraptorServer",),)
+
+    query = '''
+    SELECT Upload.Components AS Components
+    FROM uploads(flow_id=FlowId, client_id=ClientId)
+    '''
+
+    if export_zip:
+        query = '''
+        SELECT create_flow_download(
+            client_id=ClientId, flow_id=FlowId).Components AS Components
+        FROM scope()
+        '''
 
     # The first step is to open a gRPC channel to the server..
     with grpc.secure_channel(config["api_connection_string"],
@@ -74,7 +86,7 @@ def run(config, client_id, flow_id, output_path, org_id):
             max_row=100,
             Query=[api_pb2.VQLRequest(
                 Name="Test",
-                VQL="SELECT * FROM uploads(flow_id=FlowId, client_id=ClientId)",
+                VQL=query,
             )],
             env=[api_pb2.VQLEnv(key="FlowId", value=flow_id),
                  api_pb2.VQLEnv(key="ClientId", value=client_id),
@@ -89,7 +101,7 @@ def run(config, client_id, flow_id, output_path, org_id):
                 package = json.loads(response.Response)
 
                 for row in package:
-                    components = row.get("Upload", {}).get("Components", [])
+                    components = row.get("Components", [])
                     output_file = os.path.join(output_path, components[-1])
                     print ("Fetching file %s to %s" % (components, output_file))
 
@@ -109,12 +121,14 @@ def main():
     parser.add_argument("--org", type=str, help="Org ID to use")
     parser.add_argument('client_id', type=str, help='The path to get.')
     parser.add_argument('flow_id', type=str, help='The path to get.')
+    parser.add_argument('--zip', action=argparse.BooleanOptionalAction,
+                        help='If set we upload a zip file.')
     parser.add_argument('--output', type=str, default="/tmp/", help='The output directory to write.')
 
     args = parser.parse_args()
 
     config = pyvelociraptor.LoadConfigFile(args.config)
-    run(config, args.client_id, args.flow_id, args.output, args.org)
+    run(config, args.client_id, args.flow_id, args.output, args.zip, args.org)
 
 if __name__ == '__main__':
     main()

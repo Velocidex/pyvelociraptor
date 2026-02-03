@@ -67,7 +67,7 @@ def run(config, client_id, flow_id, output_path, export_zip, org_id):
 
     if export_zip:
         query = '''
-        SELECT create_flow_download(
+        SELECT create_flow_download(wait=TRUE,
             client_id=ClientId, flow_id=FlowId).Components AS Components
         FROM scope()
         '''

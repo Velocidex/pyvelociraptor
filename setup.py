@@ -30,7 +30,7 @@ setuptools.setup(
         "grpcio==1.73.0",
         "grpcio-tools==1.73.0",
         "pyyaml==6.0.2",
-        "cryptography==46.0.5",
+        "cryptography==46.0.7",
     ],
     entry_points="""
 

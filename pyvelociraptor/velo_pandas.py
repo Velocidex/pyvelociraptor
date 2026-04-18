@@ -83,7 +83,7 @@ from pyvelociraptor import api_pb2
 from pyvelociraptor import api_pb2_grpc
 
 
-def DataFrameQuery(query, timeout=600, config=None, **kw):
+def DataFrameQuery(query, timeout=600, org_id=None, config=None, **kw):
     if config is None:
         config = pyvelociraptor.LoadConfigFile()
 
@@ -105,7 +105,8 @@ def DataFrameQuery(query, timeout=600, config=None, **kw):
         # you can collect server artifacts by simply naming them using the
         # "Artifact" plugin (i.e. `SELECT * FROM Artifact.Server.Hunts.List()` )
         request = api_pb2.VQLCollectorArgs(
-            max_wait=1,
+          org_id = org_id or "",  
+          max_wait=1,
             env=[api_pb2.VQLEnv(key=k, value=v) for k,v in kw.items()],
             Query=[api_pb2.VQLRequest(
                 Name="Query",

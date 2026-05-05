@@ -35,7 +35,25 @@ and much more!
 To read more about the Velociraptor API see
 https://docs.velociraptor.app/docs/server_automation/server_api/
 
-# Licensing
+## Sample programs
+
+You will find some sample programs in the pyvelociraptor directory:
+
+* **client_example.py**: This is a simple client program that allows
+  calling the server to run a query. It demonstrates how to prepare
+  the request and collect the resulting JSON data for display
+  including viewing the query logs.
+
+* **fetch.py**: This program demonstrates how to fetch a file from the
+  server's file store - the file is fetched in chunks using the
+  `VFSGetBuffer` API.
+
+* **fetch_flow_uploads.py**: This example demonstrates how to combine
+  `Query` and `VFSGetBuffer` to both create a flow's export download
+  then fetch it from the server. The flow download is a ZIP file
+  containing all the flow data.
+
+## Licensing
 
 Note that Velociraptor itself is licensed under the AGPL, however use
 of the API is permitted and does not fall under the `derived work`
@@ -50,4 +68,4 @@ any language will work.
 
 You can even use shell scripting as the Velociraptor binary itself can
 use the API to call into the server. For details, see
-https://docs.velociraptor.app/docs/server_automation/server_api/#using-the-shell-for-automation
+https://docs.velociraptor.app/docs/server_automation/server_api/#using-the-built-in-api-client

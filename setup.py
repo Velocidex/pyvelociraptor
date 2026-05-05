@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyvelociraptor",
-    version="0.1.11",
+    version="0.1.12",
     author="The Velociraptor Team",
     author_email="support@velocidex.com",
     description="PyVelociraptor is the python binding for the Velociraptor API",

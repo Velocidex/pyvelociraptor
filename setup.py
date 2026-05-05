@@ -27,8 +27,8 @@ setuptools.setup(
         "Programming Language :: Python",
     ],
     install_requires=[
-        "grpcio==1.73.0",
-        "grpcio-tools==1.73.0",
+        "grpcio==1.80.0",
+        "grpcio-tools==1.80.0",
         "pyyaml==6.0.2",
         "cryptography==46.0.7",
     ],

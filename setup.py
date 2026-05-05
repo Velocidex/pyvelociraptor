@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pyvelociraptor",
-    version="0.1.13",
+    version="0.1.14",
     author="The Velociraptor Team",
     author_email="support@velocidex.com",
     description="PyVelociraptor is the python binding for the Velociraptor API",
@@ -27,16 +27,18 @@ setuptools.setup(
         "Programming Language :: Python",
     ],
     install_requires=[
-        "grpcio==1.73.0",
-        "grpcio-tools==1.73.0",
-        "pyyaml==6.0.2",
-        "cryptography==46.0.7",
+        "grpcio>=1.80",
+        "grpcio-tools>=1.80",
+        "pyyaml>=6",
+        "cryptography>=46.0.7",
     ],
     entry_points="""
 
     [console_scripts]
     pyvelociraptor = pyvelociraptor.client_example:main
     pyvelociraptor_push_event = pyvelociraptor.push_event:main
+    pyvelociraptor_fetch = pyvelociraptor.fetch:main
+    pyvelociraptor_fetch_flow_uploads = pyvelociraptor.fetch_flow_uploads:main
     """,
     packages=setuptools.find_packages(),
 )
